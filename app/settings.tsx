@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Toast from 'react-native-root-toast';
 
@@ -34,12 +34,12 @@ export default function SettingsScreen() {
         autoCapitalize="none"
         autoCorrect={false}
       />
-      <TouchableOpacity
+      <Pressable
         disabled={!apiKey}
-        className="w-full bg-black disabled:bg-gray-300 py-3 rounded-xl"
+        className="w-full bg-blue-600 disabled:bg-black py-3 rounded-xl"
         onPress={saveApiKeyToStorage}>
         <Text className="text-white text-center">Save API Key</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
