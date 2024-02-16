@@ -22,24 +22,32 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View className="flex flex-1 flex-col items-center space-y-4 w-full px-6 py-10">
-      <Text className="mb-4" numberOfLines={1}>
-        Current API Key: {initialApiKey || '-'}
-      </Text>
-      <TextInput
-        value={apiKey}
-        onChangeText={setApiKey}
-        className="mb-4 bg-white border-black border-2 px-4 py-3 w-full rounded-xl text-black placeholder:text-gray-500"
-        placeholder="Enter your API Key"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      <Pressable
-        disabled={!apiKey}
-        className="w-full bg-blue-600 disabled:bg-black py-3 rounded-xl"
-        onPress={saveApiKeyToStorage}>
-        <Text className="text-white text-center">Save API Key</Text>
-      </Pressable>
+    <View className="flex flex-1 flex-col items-center space-y-4 w-full pt-10">
+      <View className="flex flex-1 w-full items-center px-6">
+        <Text className="mb-4" numberOfLines={1}>
+          Current API Key: {initialApiKey || '-'}
+        </Text>
+        <TextInput
+          multiline
+          value={apiKey}
+          onChangeText={setApiKey}
+          className="mb-4 bg-white break-all border-black border-2 px-4 py-3 w-full rounded-xl text-black placeholder:text-gray-500"
+          placeholder="Enter your API Key"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      </View>
+
+      <View className="flex flex-row justify-center w-full pb-10 pt-4 border-black border-t bg-neutral-300">
+        <Pressable
+          disabled={!apiKey}
+          onPress={saveApiKeyToStorage}
+          className="bg-blue-600 disabled:bg-black p-3 px-5 rounded-3xl">
+          <Text disabled={!apiKey} className="text-white text-center">
+            Save API Key
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
