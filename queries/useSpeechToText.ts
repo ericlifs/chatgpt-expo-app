@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import * as FileSystem from 'expo-file-system';
 
 import { storage } from '~/storage/mmkv';
 
@@ -9,24 +10,24 @@ const speechToText = async ({ audioUri }: { audioUri: string }) => {
     throw new Error('No API Key configured');
   }
 
-  const formData = new FormData();
-  const imageData = {
-    uri: audioUri,
-    type: 'audio/mp4',
-    name: 'audio.m4a',
-  };
+  const { body } = await FileSystem.uploadAsync(
+    'https://api.openai.com/v1/audio/transcriptions',
+    audioUri,
+    {
+      fieldName: 'file',
+      httpMethod: 'POST',
+      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      parameters: {
+        model: 'whisper-1',
+      },
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
 
-  formData.append('file', imageData as unknown as Blob);
-  formData.append('model', 'whisper-1');
-
-  return fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'multipart/form-data',
-    },
-    body: formData,
-  }).then((response) => response.json());
+  return JSON.parse(body);
 };
 
 export default function useSpeechToText() {
