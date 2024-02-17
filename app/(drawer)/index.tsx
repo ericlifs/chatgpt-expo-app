@@ -1,20 +1,31 @@
-import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import tailshake from 'tailshake';
 
 import useChatGpt from '~/queries/useChatGpt';
 
 export default function ChatScreen() {
+  const flatListRef = useRef<FlatList>(null);
+
   const [prompt, setPrompt] = useState('');
-  const { askChatGpt, messages } = useChatGpt();
+  const { askChatGpt, messages, isPending } = useChatGpt();
+
+  const onAskButtonPress = () => {
+    askChatGpt({ prompt });
+    setPrompt('');
+
+    flatListRef.current?.scrollToEnd();
+  };
 
   return (
     <View className="flex flex-1 items-center">
       <FlatList
+        ref={flatListRef}
         data={messages}
         className="flex-1 w-full"
         contentContainerClassName="p-6"
+        extraData={{ isPending }}
         ListEmptyComponent={() => <View className="flex-1 w-full p-6" />}
         renderItem={({ item, index }) => (
           <>
@@ -26,6 +37,17 @@ export default function ChatScreen() {
             )}
           </>
         )}
+        ListFooterComponent={() => {
+          if (isPending) {
+            return (
+              <View className="my-4">
+                <ActivityIndicator />
+              </View>
+            );
+          }
+
+          return null;
+        }}
       />
 
       <View className="flex flex-row w-full px-6 pb-10 pt-4 border-black border-t bg-neutral-300">
@@ -40,7 +62,7 @@ export default function ChatScreen() {
         <Pressable
           disabled={!prompt}
           className="bg-blue-600 disabled:bg-black p-3 px-5 rounded-3xl"
-          onPress={() => askChatGpt({ prompt })}>
+          onPress={onAskButtonPress}>
           <Text disabled={!prompt} className="text-white text-center">
             Ask
           </Text>
